@@ -5,7 +5,7 @@
  </editorsettings>
  <tileset firstgid="1" name="tiles" tilewidth="8" tileheight="8" tilecount="560" columns="70">
   <transformations hflip="1" vflip="1" rotate="0" preferuntransformed="0"/>
-  <image source="../Pictures/tiles.png" width="560" height="64"/>
+  <image source="tiles.png" width="560" height="64"/>
   <tile id="47">
    <properties>
     <property name="palette" type="int" value="3"/>
