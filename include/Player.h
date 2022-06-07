@@ -40,6 +40,8 @@ struct Sprite {
     u8 id{ 255 };
     u8 xOffset{ 0 };
     u8 yOffset{ 0 };
+    u8 currentTime{ 0 };
+    u8 currentFrame{ 0 };
 };
 
 struct Frame {
@@ -48,11 +50,13 @@ struct Frame {
 };
 
 struct Animation {
-    std::unordered_map<u8, std::array<Frame, 16>> frames;
+    //std::unordered_map<u8, std::array<Frame, 16>> frames;
+    std::vector<std::array<Frame, 16>> frames;
     u8 length{ 0 };
 
     void addFrames(u8 sprite, std::array<Frame, 16>& newFrames) {
-        frames[sprite] = newFrames;
+        //frames[sprite] = newFrames;
+        frames.push_back(newFrames);
     }
 };
 
@@ -66,8 +70,6 @@ class Player {
         int16_t x, y;
 
         u8 direction;
-        u8 currentFrame;
-        u8 currentTime;
 
         State state;
 
@@ -84,7 +86,7 @@ class Player {
 
         // Move these functions to some kind of animation class
 
-        void setFrame(u8 sprite, u8 newFrame);
+        void setFrame(u8 sprite, u8 tileIndex);
 
         void pushAnim(const PlayerAnimation& name, const Animation& anim);
 
