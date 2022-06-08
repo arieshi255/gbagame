@@ -41,7 +41,7 @@ void OverworldScene::load(const Player& player) {
     CpuFastSet(linkTiles, CHAR_BASE_BLOCK(4), COPY32 | (linkTilesLen / 4));
 
     // Activate the tilemap for bg0
-    REG_BG0CNT = BG_SIZE_0 | BG_16_COLOR | SCREEN_BASE(8) | CHAR_BASE(0) | BG_PRIORITY(3);
+    REG_BG0CNT = BG_SIZE_0 | BG_256_COLOR | SCREEN_BASE(8) | CHAR_BASE(0) | BG_PRIORITY(3);
 }
 
 void OverworldScene::unload() {

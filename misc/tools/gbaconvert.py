@@ -42,7 +42,7 @@ class GBAConvert(Plugin):
                                 if props > '0':
                                     palette = (int(props) - 1) << 0x0C
 
-                                tiles.append("0x{0:04x}".format(tile.id() | flip | palette))
+                                tiles.append("0x{0:04x}".format(tile.id() | flip))
                             else:
                                 tiles.append(str(-1))
 

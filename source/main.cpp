@@ -53,7 +53,7 @@ int main() {
     initSprites();
 
     // Initialize console output
-    consoleInit(3, 28, 1, NULL, 0, 1);
+    consoleInit(3, 28, 1, NULL, 0, 4);
 
     // Music test
     //mmInitDefault((mm_addr)soundbank_bin, 15);
