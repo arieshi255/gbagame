@@ -29,44 +29,39 @@ Player::Player() : x(20), y(20), direction(1), state(State::Idle) {
         }
     };
 
-    Animation idleu = Animation{
-        .frames = {
+    Animation idleu{
+        {
             { Frame{.tileIndex = 80} },
             { Frame{.tileIndex = 84} } 
-        },
-        .length = 1
+        }
     };
 
-    Animation idled = Animation{
-        .frames = {
+    Animation idled{
+        {
             { Frame{.tileIndex = 0} },
             { Frame{.tileIndex = 4} }
-        },
-        .length = 1
+        }
     };
 
-    Animation idlel = Animation{
-        .frames = {
+    Animation idlel{
+        {
             { Frame{.tileIndex = 40} },
             { Frame{.tileIndex = 44} }
-        },
-        .length = 1
+        }
     };
 
-    Animation idler = Animation{
-        .frames = {
+    Animation idler{
+        {
             { Frame{.tileIndex = 40} },
             { Frame{.tileIndex = 44} }
-        },
-        .length = 1
+        }
     };
 
-    Animation walkd = Animation{
-        .frames = {
+    Animation walkd{
+        {
             { Frame{.tileIndex = 0} },
-            { Frame{.tileIndex = 8}, Frame{.tileIndex = 12}, Frame{.tileIndex = 16}, Frame{.tileIndex = 20} }
-        },
-        .length = 4
+            { Frame{.tileIndex = 8, .frameTime = 2}, Frame{.tileIndex = 12, .frameTime = 3}, Frame{.tileIndex = 16, .frameTime = 2}, Frame{.tileIndex = 20, .frameTime = 2} }
+        }
     };
 
     pushAnim(PlayerAnimation::IDLE_UP, idleu);
@@ -115,8 +110,7 @@ void Player::inputEvent(InputContext &ctx) {
     // iprintf("\x1b[0;0HDir: %i", direction);
 
     // Pause game if action is triggered
-    if (ctx.action == Action::Pause)
-    {
+    if (ctx.action == Action::Pause) {
         state = state != State::PausedState ? State::PausedState : State::Idle;
     }
 
@@ -125,10 +119,8 @@ void Player::inputEvent(InputContext &ctx) {
         return;
 
     // Movement state
-    if (ctx.state == State::Walk)
-    {
-        if (ctx.keyEvent == KeyType::KEYHOLD)
-        {
+    if (ctx.state == State::Walk) {
+        if (ctx.keyEvent == KeyType::KEYHOLD) {
             if (ctx.keys & KEY_UP)
                 movePlayer(x, y - SPEED);
             else if (ctx.keys & KEY_DOWN)
@@ -140,9 +132,8 @@ void Player::inputEvent(InputContext &ctx) {
                 movePlayer(x + SPEED, y);
         }
 
-        if (ctx.keyEvent == KeyType::KEYRELEASE)
-        {
-            changeAnim(direction);
+        if (ctx.keyEvent == KeyType::KEYRELEASE) {
+            //changeAnim(direction);
         }
     }
 }
@@ -153,41 +144,36 @@ void Player::setFrame(u8 sprite, u8 tileIndex) {
     }
 }
 
-void Player::pushAnim(const PlayerAnimation &name, const Animation &anim) {
+void Player::pushAnim(const PlayerAnimation &name, const Animation& anim) {
     animations[name] = anim;
 }
 
-void Player::playCurrentAnim(const Animation &anim) {
+void Player::playCurrentAnim(const Animation& anim) {
     for (u8 i = 0; i < SPRITES; i++) {
         ++playerSprite[i].currentTime;
 
-        u8 spriteId = playerSprite[i].id;
-        auto& frames = anim.frames[i];
+        auto& frames = anim.getFrames(i);
 
         if (playerSprite[i].currentTime >= frames[playerSprite[i].currentFrame].frameTime) {
             playerSprite[i].currentTime = 0;
 
-            if (playerSprite[i].currentFrame + 1 < frames.size())
+            // Check to make sure the next frame is in bounds and isn't an invalid tile
+            if (playerSprite[i].currentFrame + 1 < frames.size() && frames[playerSprite[i].currentFrame + 1].tileIndex != 255)
                 ++playerSprite[i].currentFrame;
             else
                 playerSprite[i].currentFrame = 0; // TODO: add support for non looping animations
 
-            if (frames[playerSprite[i].currentFrame].tileIndex == 255)
-                continue;
-
-            iprintf("\x1b[0;0HIdx: %i", frames[playerSprite[i].currentFrame].tileIndex);
-
-            setFrame(spriteId, frames[playerSprite[i].currentFrame].tileIndex);
+            setFrame(playerSprite[i].id, frames[playerSprite[i].currentFrame].tileIndex);
         }
     }
 }
 
 void Player::changeAnim(const PlayerAnimation &name) {
-    Animation &animation = animations[name];
+    Animation& animation = animations[name];
 
-    if (((currentAnim && currentAnim != &animation) || (currentAnim != &animation)) && animation.length != 0)
-    {
+    if (currentAnim != &animation && animation.getLength() != 0) {
         currentAnim = &animation;
+        
         for (u8 i = 0; i < SPRITES; i++) {
             playerSprite[i].currentFrame = 0;
         }

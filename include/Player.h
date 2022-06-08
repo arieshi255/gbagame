@@ -15,11 +15,7 @@
 #ifndef __PLAYER
 #define __PLAYER
 
-#include <array>
-#include <unordered_map>
-
-#include <gba_types.h>
-
+#include "Animation.h"
 #include "Events.h"
 
 #define SPRITES 2
@@ -34,30 +30,6 @@ enum PlayerAnimation : u8 {
     WALK_DOWN,
     WALK_LEFT,
     WALK_RIGHT
-};
-
-struct Sprite {
-    u8 id{ 255 };
-    u8 xOffset{ 0 };
-    u8 yOffset{ 0 };
-    u8 currentTime{ 0 };
-    u8 currentFrame{ 0 };
-};
-
-struct Frame {
-    u8 tileIndex{ 255 };
-    u8 frameTime{ 4 };
-};
-
-struct Animation {
-    //std::unordered_map<u8, std::array<Frame, 16>> frames;
-    std::vector<std::array<Frame, 16>> frames;
-    u8 length{ 0 };
-
-    void addFrames(u8 sprite, std::array<Frame, 16>& newFrames) {
-        //frames[sprite] = newFrames;
-        frames.push_back(newFrames);
-    }
 };
 
 class Player {
@@ -75,7 +47,6 @@ class Player {
 
     public:
         Player();
-
         Player(Player&&) = default;
 
         void update();
