@@ -57,11 +57,11 @@ class Player {
 
         // Move these functions to some kind of animation class
 
-        void setFrame(u8 sprite, u8 tileIndex);
+        void setFrame(const Sprite& sprite, Frame& frame);
 
         void pushAnim(const PlayerAnimation& name, const Animation& anim);
 
-        void playCurrentAnim(const Animation& anim);
+        void playCurrentAnim(Animation& anim);
 
         void changeAnim(const PlayerAnimation& name);
 

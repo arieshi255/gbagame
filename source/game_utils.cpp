@@ -51,7 +51,8 @@ u8 setSpritePosition(u8 sprite, int16_t x, int16_t y) {
     return sprite;
 }
 
-u8 setSpriteTiles(u8 sprite, u32 startTile) {
+u8 setSpriteTiles(u8 sprite, u32 startTile, u8 flipFlags) {
+    sprites.oamBuffer[sprite].attr1 = ((flipFlags & 0x02) << 0xD | (flipFlags & 0x01) << 0xC) | sprites.oamBuffer[sprite].attr1 & 0xE7FF;
     sprites.oamBuffer[sprite].attr2 = startTile & 0x1FF | sprites.oamBuffer[sprite].attr2 & 0xFE00;
 
     return sprite;

@@ -36,7 +36,7 @@ u8 addSprite(int16_t x, int16_t y, u32 tile);
 
 u8 setSpritePosition(u8 sprite, int16_t x, int16_t y);
 
-u8 setSpriteTiles(u8 sprite, u32 startTile);
+u8 setSpriteTiles(u8 sprite, u32 startTile, u8 flipFlags);
 
 void oamCopy(const OBJATTR* src);
 

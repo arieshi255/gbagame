@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#include "game_utils.h"
+
 #include "Animation.h"
 
-Animation::Animation() { }
+Animation::Animation() : flips(false) { }
 
-Animation::Animation(const std::vector<SpriteFrames>&& frames) : frames(frames) { }
+Animation::Animation(const std::vector<SpriteFrames>&& frames, const bool flips) : frames(frames), flips(flips) { }
 
-const SpriteFrames& Animation::getFrames(u8 sprite) const {
+SpriteFrames& Animation::getFrames(u8 sprite) {
     return frames[sprite];
 }
 
@@ -30,6 +32,17 @@ const u8 Animation::getLength() const {
     return frames.size();
 }
 
+void Animation::setFrame(const Sprite& sprite, Frame& frame) {
+    setSpriteTiles(sprite.id, frame.tileIndex, frame.flipFlags);
+
+    if (sprite.flipAllowed)
+        frame.flipFlags = !frame.flipFlags;
+}
+
 void Animation::addFrames(u8 sprite, const SpriteFrames& newFrames) {
     frames.push_back(newFrames);
+}
+
+const bool Animation::hasFlips() const {
+    return flips;
 }

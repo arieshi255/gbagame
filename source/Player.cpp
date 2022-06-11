@@ -25,7 +25,8 @@ Player::Player() : x(20), y(20), direction(1), state(State::Idle) {
         },
         Sprite{
             .id = addSprite(x, y + 8, 4),
-            .yOffset = 8
+            .yOffset = 8,
+            .flipAllowed = true
         }
     };
 
@@ -57,11 +58,22 @@ Player::Player() : x(20), y(20), direction(1), state(State::Idle) {
         }
     };
 
+    // Start walking:
+    // Frame 0: turn on flip
+    // Frame 1: turn off flip
+
+    // Loop:
+    // Next cycle:
+    // Frame 1: turn on flip
+    // Next cycle:
+    // Frame 1: turn off flip
+
     Animation walkd{
         {
             { Frame{.tileIndex = 0} },
-            { Frame{.tileIndex = 8, .frameTime = 2}, Frame{.tileIndex = 12, .frameTime = 3}, Frame{.tileIndex = 16, .frameTime = 2}, Frame{.tileIndex = 20, .frameTime = 2} }
-        }
+            { Frame{.tileIndex = 8, .frameTime = 2, .flipFlags = 1}, Frame{.tileIndex = 12, .frameTime = 3}, Frame{.tileIndex = 16, .frameTime = 2}, Frame{.tileIndex = 20, .frameTime = 2} }
+        },
+        true
     };
 
     pushAnim(PlayerAnimation::IDLE_UP, idleu);
@@ -138,9 +150,12 @@ void Player::inputEvent(InputContext &ctx) {
     }
 }
 
-void Player::setFrame(u8 sprite, u8 tileIndex) {
+void Player::setFrame(const Sprite& sprite, Frame& frame) {
     if (currentAnim) {
-        setSpriteTiles(sprite, tileIndex);
+        setSpriteTiles(sprite.id, frame.tileIndex, frame.flipFlags);
+
+        if (sprite.flipAllowed && currentAnim->hasFlips())
+            frame.flipFlags = !frame.flipFlags;
     }
 }
 
@@ -148,7 +163,7 @@ void Player::pushAnim(const PlayerAnimation &name, const Animation& anim) {
     animations[name] = anim;
 }
 
-void Player::playCurrentAnim(const Animation& anim) {
+void Player::playCurrentAnim(Animation& anim) {
     for (u8 i = 0; i < SPRITES; i++) {
         ++playerSprite[i].currentTime;
 
@@ -163,7 +178,7 @@ void Player::playCurrentAnim(const Animation& anim) {
             else
                 playerSprite[i].currentFrame = 0; // TODO: add support for non looping animations
 
-            setFrame(playerSprite[i].id, frames[playerSprite[i].currentFrame].tileIndex);
+            setFrame(playerSprite[i], frames[playerSprite[i].currentFrame]);
         }
     }
 }
